@@ -13,6 +13,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -38,6 +40,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGLocatable;
+import org.w3c.dom.svg.SVGPathElement;
+import org.w3c.dom.svg.SVGRectElement;
 
 
 /**
@@ -95,8 +100,9 @@ public class PrototypeSVGPanel extends javax.swing.JPanel {
                 if (choice == JFileChooser.APPROVE_OPTION) {
                     File f = fc.getSelectedFile();
                     try {
-                    	svgCanvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
-                        svgCanvas.setURI(f.toURL().toString());
+                    	 svgCanvas.setURI(f.toURL().toString());
+                    	 svgCanvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
+                         
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
@@ -114,11 +120,17 @@ public class PrototypeSVGPanel extends javax.swing.JPanel {
                 Element docNode = svgDoc.getDocumentElement();
                 NodeList pathNodes = docNode.getElementsByTagName("*");
                  
+                List<SVGLocatable> pathElements = new ArrayList<SVGLocatable>();
                 for(int i = 0; i < pathNodes.getLength(); i++){
                 
                 	Node node = pathNodes.item(i);
                 	org.w3c.dom.events.EventTarget t = (EventTarget) node;
-                	t.addEventListener(SVGConstants.SVG_EVENT_CLICK, new MouseListener(svgDoc), false);
+                	
+                	if ((t instanceof SVGLocatable)) {
+                		pathElements.add((SVGLocatable)t);
+                	}
+                	
+                	t.addEventListener(SVGConstants.SVG_EVENT_CLICK, new MouseListener(svgDoc, svgCanvas, pathElements), false);
                 }
                 
                 svgDoc.getRootElement().setAttributeNS(null,
@@ -149,10 +161,8 @@ public class PrototypeSVGPanel extends javax.swing.JPanel {
                 int panelHeight = panel.getHeight() - 80;
 	            int panelWidth = panel.getWidth() - 10;
 	            
-	            BridgeContext ctx = new BridgeContext(new UserAgentAdapter());
-                GVTBuilder builder = new GVTBuilder();
-                GraphicsNode gvtRoot = builder.build(ctx, svgDoc);
-
+	            GraphicsNode gvtRoot = svgCanvas.getCanvasGraphicsNode();
+                        
                 Rectangle2D rect = gvtRoot.getSensitiveBounds();
                 
 	            double ratio = panelWidth/rect.getWidth() > panelHeight/rect.getHeight() ? panelWidth/rect.getWidth() : panelHeight/rect.getHeight(); 
