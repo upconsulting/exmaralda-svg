@@ -92,6 +92,7 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
         p.add(button);
         p.add(label);
         
+        // add components for showing selected xpointer
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         JLabel label1 = new JLabel("XPointer for selected Element",
