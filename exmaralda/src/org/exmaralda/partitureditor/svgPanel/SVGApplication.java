@@ -10,7 +10,7 @@ public class SVGApplication {
     public static void main(String[] args) {
         // Create a new JFrame.
         JFrame f = new JFrame("Batik");
-        PrototypeSVGPanel app = new PrototypeSVGPanel(f);
+        DisplaySVGPanel app = new DisplaySVGPanel(f);
         
         // Add components to the frame.
         f.getContentPane().add(app);
@@ -21,7 +21,7 @@ public class SVGApplication {
                 System.exit(0);
             }
         });
-        f.setSize(900, 600);
+        f.setSize(1000, 600);
         f.setVisible(true);
     }
 

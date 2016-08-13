@@ -100,7 +100,8 @@ public class MouseListener implements EventListener {
 	                 }
                  }
                  
-                 System.out.println(getXPath((SVGOMElement)ctx.getElement(smallestNode)));
+                 String xpointer = getXPath((SVGOMElement)ctx.getElement(smallestNode));
+                 XPointerObservable._instance.setCurrentXPointer(xpointer);
 			}
 			
 			if (target instanceof SVGOMElement && !(target instanceof SVGImageElement)) {

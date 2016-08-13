@@ -6,6 +6,7 @@
 package org.exmaralda.partitureditor.svgPanel;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,16 +16,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.JSVGScrollPane;
@@ -41,15 +43,13 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGLocatable;
-import org.w3c.dom.svg.SVGPathElement;
-import org.w3c.dom.svg.SVGRectElement;
 
 
 /**
  *
- * @author Schmidt
+ * @author Julia Damerow
  */
-public class PrototypeSVGPanel extends javax.swing.JPanel {
+public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
 	
 	// The frame.
     protected JFrame frame;
@@ -64,8 +64,11 @@ public class PrototypeSVGPanel extends javax.swing.JPanel {
     protected JSVGCanvas svgCanvas = new JSVGCanvas();
     protected SVGDocument svgDoc;
 
-    public PrototypeSVGPanel(JFrame f) {
+	private JTextField textField;
+
+    public DisplaySVGPanel(JFrame f) {
         frame = f;
+        XPointerObservable._instance.addObserver(this);
         initComponents();
     }
 
@@ -88,9 +91,21 @@ public class PrototypeSVGPanel extends javax.swing.JPanel {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
         p.add(button);
         p.add(label);
-
-        panel.add("North", p);
-        panel.add("Center", scroller);
+        
+        JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+        JLabel label1 = new JLabel("XPointer for selected Element",
+                JLabel.LEFT);
+        rightPanel.add(label1);
+        textField = new JTextField(15);
+        textField.setEditable(false);
+        textField.setMaximumSize(new Dimension(400, 40));
+        rightPanel.add(textField);
+        
+        panel.add(BorderLayout.PAGE_START, p);
+        panel.add(BorderLayout.CENTER, scroller);
+        panel.add(BorderLayout.LINE_END, rightPanel);
+        
 
         // Set the button action.
         button.addActionListener(new ActionListener() {
@@ -134,7 +149,7 @@ public class PrototypeSVGPanel extends javax.swing.JPanel {
                 }
                 
                 svgDoc.getRootElement().setAttributeNS(null,
-                        SVGConstants.SVG_WIDTH_ATTRIBUTE, frame.getWidth()-10  + "");
+                        SVGConstants.SVG_WIDTH_ATTRIBUTE, frame.getWidth()-270  + "");
                 svgDoc.getRootElement().setAttributeNS(null,
                         SVGConstants.SVG_HEIGHT_ATTRIBUTE, frame.getHeight()-80 + "");
                 
@@ -159,7 +174,7 @@ public class PrototypeSVGPanel extends javax.swing.JPanel {
                 label.setText("");
                 AffineTransform at = new AffineTransform();
                 int panelHeight = panel.getHeight() - 80;
-	            int panelWidth = panel.getWidth() - 10;
+	            int panelWidth = panel.getWidth() - 270;
 	            
 	            GraphicsNode gvtRoot = svgCanvas.getCanvasGraphicsNode();
                         
@@ -172,7 +187,15 @@ public class PrototypeSVGPanel extends javax.swing.JPanel {
             }
         });
 
-    }// </editor-fold>//GEN-END:initComponents
+    }
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof XPointerObservable) {
+			String xpointer = arg.toString();
+			textField.setText(xpointer);
+		}
+	}
 
 //    private void sendXPointerTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendXPointerTextFieldActionPerformed
 //        // TODO add your handling code here:
