@@ -6,6 +6,7 @@
 package org.exmaralda.partitureditor.svgPanel;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -26,23 +27,34 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.JSVGScrollPane;
 import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
 import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
+import org.apache.batik.swing.gvt.Overlay;
 import org.apache.batik.swing.svg.GVTTreeBuilderAdapter;
 import org.apache.batik.swing.svg.GVTTreeBuilderEvent;
 import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter;
 import org.apache.batik.swing.svg.SVGDocumentLoaderEvent;
 import org.apache.batik.util.SVGConstants;
+import org.apache.xpath.XPathAPI;
+import org.apache.xpath.objects.XObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGLocatable;
+import org.w3c.dom.xpath.XPathEvaluator;
+import org.w3c.dom.xpath.XPathResult;
 
 
 /**
@@ -65,6 +77,8 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
     protected SVGDocument svgDoc;
 
 	private JTextField textField;
+
+	private JTextField enterXpointerText;
 
     public DisplaySVGPanel(JFrame f) {
         frame = f;
@@ -94,19 +108,56 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
         
         // add components for showing selected xpointer
         JPanel rightPanel = new JPanel();
+        rightPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-        JLabel label1 = new JLabel("XPointer for selected Element",
+        JLabel label1 = new JLabel("XPointer for selected Element:",
                 JLabel.LEFT);
+        label1.setAlignmentX(Component.LEFT_ALIGNMENT);
         rightPanel.add(label1);
-        textField = new JTextField(15);
+        
+        textField = new JTextField();
         textField.setEditable(false);
         textField.setMaximumSize(new Dimension(400, 40));
+        textField.setAlignmentX(Component.LEFT_ALIGNMENT);
         rightPanel.add(textField);
         
         panel.add(BorderLayout.PAGE_START, p);
         panel.add(BorderLayout.CENTER, scroller);
         panel.add(BorderLayout.LINE_END, rightPanel);
         
+        // add components for entering xpointer
+        JLabel labelEnterXPointer = new JLabel("Enter an XPointer to highlight:",
+                JLabel.LEFT);
+        labelEnterXPointer.setAlignmentX(Component.LEFT_ALIGNMENT);
+        rightPanel.add(labelEnterXPointer);
+        
+        enterXpointerText = new JTextField();
+        enterXpointerText.setMaximumSize(new Dimension(400, 40));
+        enterXpointerText.setAlignmentX(Component.LEFT_ALIGNMENT);
+        rightPanel.add(enterXpointerText);
+        
+        JButton hightlightButton = new JButton();
+        hightlightButton.setText("Highlight Component");
+        hightlightButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String xpointer = enterXpointerText.getText();
+				if (xpointer != null && !xpointer.trim().isEmpty()) {
+					XPathEvaluator pathEval = (XPathEvaluator) svgDoc;
+					XPath xpath = XPathFactory.newInstance().newXPath();
+					try {
+						Object obj = xpath.evaluate(xpointer, svgDoc.getRootElement(), XPathConstants.NODE);
+						
+					} catch (XPathExpressionException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				}
+			}
+		});
+        rightPanel.add(hightlightButton);
 
         // Set the button action.
         button.addActionListener(new ActionListener() {
