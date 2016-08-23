@@ -7,7 +7,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.batik.anim.dom.SVGOMDocument;
 import org.apache.batik.anim.dom.SVGOMElement;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.dom.events.DOMMouseEvent;
@@ -105,18 +104,19 @@ public class MouseListener implements EventListener {
 			}
 			
 			if (target instanceof SVGOMElement && !(target instanceof SVGImageElement)) {
-				System.out.println("xpath: " + getXPath(((SVGOMElement)target)));
+				String xpointer = getXPath(((SVGOMElement)target));
+                XPointerObservable._instance.setCurrentXPointer(xpointer);
 			}
 		}
 	}
 	
 	public String getXPath(SVGOMElement node)
 	{
+		if (node.hasAttribute("id")) {
+			return "//*[@id='" + node.getAttribute("id") + "']";
+		}
 	    Node parent = node.getParentNode();
-	    if (parent == null || parent instanceof SVGOMDocument) {
-	        return "/" + node.getLocalName();
-	    }
-	    return getXPath((SVGOMElement)parent) + "/" + "[@id='" + node.getAttribute("id") + "']";
+	    return getXPath((SVGOMElement)parent) + "/" + node.getLocalName();
 	}
 
 }
