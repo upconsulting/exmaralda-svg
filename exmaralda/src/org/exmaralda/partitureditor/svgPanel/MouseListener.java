@@ -7,7 +7,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.batik.anim.dom.SVGOMDocument;
 import org.apache.batik.anim.dom.SVGOMElement;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.dom.events.DOMMouseEvent;

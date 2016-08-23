@@ -27,7 +27,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -51,7 +50,6 @@ import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGLocatable;
-import org.w3c.dom.xpath.XPathEvaluator;
 
 /**
  *
