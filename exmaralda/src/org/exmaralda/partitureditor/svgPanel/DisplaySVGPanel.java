@@ -243,7 +243,7 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
 					}
 
 					t.addEventListener(SVGConstants.SVG_EVENT_CLICK,
-							new MouseListener(svgDoc, svgCanvas, pathElements),
+							new MouseListener(svgCanvas),
 							false);
 				}
 
