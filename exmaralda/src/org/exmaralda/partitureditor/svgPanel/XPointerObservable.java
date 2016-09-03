@@ -8,8 +8,15 @@ public class XPointerObservable extends Observable {
 	
 	private XPointerObservable() {}
 	
+	private String currentXPointer;
+	
 	public void setCurrentXPointer(String xpointer) {
 		setChanged();
+		this.currentXPointer = xpointer;
 		notifyObservers(xpointer);
+	}
+	
+	public String getCurrentXPointer() {
+		return currentXPointer;
 	}
 }
