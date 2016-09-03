@@ -115,7 +115,6 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
 		
 		JButton zoomIn = new JButton("Zoom In");
 		p.add(zoomIn);
-		
 		zoomIn.addActionListener(svgCanvas.getActionMap().get(JSVGCanvas.ZOOM_IN_ACTION));
 		
 		JButton zoomOut = new JButton("Zoom Out");
@@ -161,7 +160,6 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
 				String xpointer = enterXpointerText.getText();
 				if (xpointer != null && !xpointer.trim().isEmpty()) {
 					XPath xpath = XPathFactory.newInstance().newXPath();
-					xpath.setNamespaceContext(new SimpleNamespaceContext());
 					try {
 						// get object identified by xpointer
 						final Object obj = xpath.evaluate(xpointer, svgDoc.getRootElement(),
