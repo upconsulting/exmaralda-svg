@@ -158,28 +158,7 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String xpointer = enterXpointerText.getText();
-				if (xpointer != null && !xpointer.trim().isEmpty()) {
-					XPath xpath = XPathFactory.newInstance().newXPath();
-					try {
-						// get object identified by xpointer
-						final Object obj = xpath.evaluate(xpointer, svgDoc.getRootElement(),
-								XPathConstants.NODE);
-						if (obj != null && obj instanceof SVGElement) {
-							UpdateManager um = svgCanvas.getUpdateManager();
-							um.getUpdateRunnableQueue().invokeLater(new Runnable() {
-
-								@Override
-								public void run() {
-									removeHighlight();
-									highlightElement((SVGElement) obj);
-								}
-							});
-						}
-					} catch (XPathExpressionException e1) {
-						// TODO this should be handled appropriately
-						e1.printStackTrace();
-					}
-				}
+				highlightByXPointer(xpointer);
 			}
 		});
 		rightPanel.add(hightlightButton);
@@ -344,6 +323,37 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
 		if (o instanceof XPointerObservable) {
 			String xpointer = arg.toString();
 			textField.setText(xpointer);
+			highlightByXPointer(xpointer);
+		}
+	}
+
+	/**
+	 * This method takes the given XPointer and highlights the corresponding
+	 * SVG element.
+	 * @param xpointer An xpointer identifying the element to highlight.
+	 */
+	public void highlightByXPointer(String xpointer) {
+		if (xpointer != null && !xpointer.trim().isEmpty()) {
+			XPath xpath = XPathFactory.newInstance().newXPath();
+			try {
+				// get object identified by xpointer
+				final Object obj = xpath.evaluate(xpointer, svgDoc.getRootElement(),
+						XPathConstants.NODE);
+				if (obj != null && obj instanceof SVGElement) {
+					UpdateManager um = svgCanvas.getUpdateManager();
+					um.getUpdateRunnableQueue().invokeLater(new Runnable() {
+
+						@Override
+						public void run() {
+							removeHighlight();
+							highlightElement((SVGElement) obj);
+						}
+					});
+				}
+			} catch (XPathExpressionException e1) {
+				// TODO this should be handled appropriately
+				e1.printStackTrace();
+			}
 		}
 	}
 }
