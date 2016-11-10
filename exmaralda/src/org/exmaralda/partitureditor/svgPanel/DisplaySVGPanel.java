@@ -86,6 +86,8 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
 
 	private SVGElement highlighted;
 	
+	private String xpointerToHighlightOnLoadComplete = null;
+	
 	// url of currently selected file
 	private URL selectedFileUrl;
 
@@ -268,6 +270,11 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
 				at.scale(ratio, ratio);
 				svgCanvas.setRenderingTransform(at, true);
 				svgCanvas.repaint();
+				
+				if (xpointerToHighlightOnLoadComplete != null) {
+					highlightByXPointer(xpointerToHighlightOnLoadComplete);
+					xpointerToHighlightOnLoadComplete = null;
+				}
 			}
 		});
 
@@ -315,6 +322,18 @@ public class DisplaySVGPanel extends javax.swing.JPanel implements Observer {
 		this.selectedFileUrl = selectedFileUrl;
 		svgCanvas.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
 		svgCanvas.setURI(selectedFileUrl.toString());
+	}
+	
+	/**
+	 * Method to set and load an SVG file. In addition to the URL of the new SVG file,
+	 * this method also takes an xpointer that should be highlighted after the file has
+	 * been loaded.
+	 * @param selectedFileUrl URL to SVG file
+	 * @param xpointer XPointer of element to hightlight after load is complete
+	 */
+	public void setSelectedFileAndXPointer(URL selectedFileUrl, String xpointer) {
+		xpointerToHighlightOnLoadComplete = xpointer;
+		setSelectedFileUrl(selectedFileUrl);
 	}
 
 
